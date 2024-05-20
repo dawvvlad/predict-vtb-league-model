@@ -87,3 +87,4 @@ pred = model.predict_proba(pr_data)
 print(f'Вероятность победы в матче: {t1 if pred[0][0] < pred[0][1] else t2} побеждает')
 print(pred)
 
+#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
