@@ -86,3 +86,5 @@ pr_data = pr_data.loc[:, ~pr_data.columns.duplicated()]
 pred = model.predict_proba(pr_data)
 print(f'Вероятность победы в матче: {t1 if pred[0][0] < pred[0][1] else t2} побеждает')
 print(pred)
+
+#
