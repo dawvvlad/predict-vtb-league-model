@@ -1,10 +1,11 @@
 import pandas as pd
+from matplotlib import pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import TimeSeriesSplit, train_test_split, cross_val_score
 from sklearn.feature_selection import SequentialFeatureSelector
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import accuracy_score
-
+import seaborn as sns
 from funcs import get_team_season_stats
 from data import df, team_stats_by_season
 
@@ -78,8 +79,8 @@ def get_team_data(team, team_2):
     combined = pd.concat([last_10_games_1.reset_index(drop=True), last_10_games_2.reset_index(drop=True)], axis=1)
     return combined.mean().to_frame().T.sort_index(axis=1)
 
-t1 = 'Автодор'
-t2 = 'ЦСКА'
+t2 = 'Автодор'
+t1 = 'ЦСКА'
 pr_data = get_team_data(t1, t2)
 pr_data = pr_data.loc[:, ~pr_data.columns.duplicated()]
 
@@ -87,4 +88,4 @@ pred = model.predict_proba(pr_data)
 print(f'Вероятность победы в матче: {t1 if pred[0][0] < pred[0][1] else t2} побеждает')
 print(pred)
 
-#
+
