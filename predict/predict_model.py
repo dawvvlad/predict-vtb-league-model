@@ -1,15 +1,9 @@
 import pandas as pd
-from matplotlib import pyplot as plt
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import TimeSeriesSplit, train_test_split, cross_val_score
+from sklearn.model_selection import TimeSeriesSplit
 from sklearn.feature_selection import SequentialFeatureSelector
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.metrics import accuracy_score
-import seaborn as sns
-from funcs import get_team_season_stats
 from data import df, team_stats_by_season
-
-result_data = get_team_season_stats('ЦСКА')
 
 dataset = pd.merge(df, team_stats_by_season, on=['Имя', 'Сезон'], how='left')
 
