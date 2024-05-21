@@ -1,9 +1,13 @@
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.feature_selection import SequentialFeatureSelector
 from sklearn.preprocessing import MinMaxScaler
 from data import df, team_stats_by_season
+from funcs import get_team_season_stats
+
+result_data = get_team_season_stats('ЦСКА')
 
 dataset = pd.merge(df, team_stats_by_season, on=['Имя', 'Сезон'], how='left')
 
@@ -11,6 +15,7 @@ team_stats_by_season_prot = team_stats_by_season.rename(columns=lambda x: x + ' 
 
 # Объединение данных по имени противника
 dataset = pd.merge(dataset, team_stats_by_season_prot, left_on=['Имя прот.', 'Сезон'], right_on=['Имя', 'Сезон'], how='left')
+
 
 # Целевой признак
 def add_target(team):
@@ -53,7 +58,7 @@ def back_test(data, model, predictors, start=2, step=1):
 
 
 model = back_test(dataset, lr, predictors)
-
+print(accuracy_score(model.predict(dataset[predictors]), dataset['Цель']))
 
 def get_team_data(team, team_2):
 
