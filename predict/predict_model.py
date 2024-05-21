@@ -78,8 +78,10 @@ def get_team_data(team, team_2):
     combined = pd.concat([last_10_games_1.reset_index(drop=True), last_10_games_2.reset_index(drop=True)], axis=1)
     return combined.mean().to_frame().T.sort_index(axis=1)
 
-t2 = 'Автодор'
-t1 = 'ЦСКА'
+
+t1 = 'УНИКС'
+t2 = 'Локомотив-Кубань'
+
 pr_data = get_team_data(t1, t2)
 pr_data = pr_data.loc[:, ~pr_data.columns.duplicated()]
 

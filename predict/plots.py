@@ -49,7 +49,7 @@ team_2_data = dataset[dataset['Имя'] == t2].tail(10)
 team_1_avg = team_1_data[predictors].mean()
 team_2_avg = team_2_data[predictors].mean()
 
-comparison_df = pd.DataFrame({'Команда 1': team_1_avg, 'Команда 2': team_2_avg})
+comparison_df = pd.DataFrame({f'{t1}': team_1_avg, f'{t2}': team_2_avg})
 comparison_df.plot(kind='bar', figsize=(14, 8))
 plt.title(f'Сравнение производительности за последние 10 игр: {t1} vs {t2}')
 plt.xlabel('Признаки')
