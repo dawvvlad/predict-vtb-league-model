@@ -1,2 +1,3 @@
-# predict-vtb-league-model
-A model which predicts winner in a game
+# Модель машинного обучения для предсказания спортивных событий
+[!INFO]
+> Код Jupyter notebook 
