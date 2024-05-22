@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import TimeSeriesSplit
+from sklearn.model_selection import TimeSeriesSplit, train_test_split
 from sklearn.feature_selection import SequentialFeatureSelector
 from sklearn.preprocessing import MinMaxScaler
 from data import df, team_stats_by_season
@@ -48,17 +48,17 @@ for i in args:
 predictors.sort()
 
 
-def back_test(data, model, predictors, start=2, step=1):
-    seasons = sorted(data['Сезон'].unique())
-    for i in range(start, len(seasons), step):
-        season = seasons[i]
-        train = data[data['Сезон'] < season]
-        model.fit(train[predictors], train['Цель'])
-    return model
+def back_test(data, model, predictors):
+    X = data[predictors]
+    y = data['Цель']
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    model.fit(X_train, y_train)
+    score = accuracy_score(model.predict(X_test), y_test)
+    return model, score
 
 
-model = back_test(dataset, lr, predictors)
-print(accuracy_score(model.predict(dataset[predictors]), dataset['Цель']))
+model, score = back_test(dataset, lr, predictors)
+
 
 def get_team_data(team, team_2):
 
@@ -75,18 +75,29 @@ def get_team_data(team, team_2):
     last_10_games_2 = team_2_sorted[predictors].tail(10).filter(regex='^(?!.*прот).*$').rename(
         columns=lambda x: f"{x} прот.")
     last_10_games_2.drop(columns=['МИН прот.', 'Потери прот.', 'Фолы прот.'], inplace=True)
-    combined = pd.concat([last_10_games_1.reset_index(drop=True), last_10_games_2.reset_index(drop=True)], axis=1)
+    combined = pd.concat([last_10_games_1.reset_index(drop=True),
+                          last_10_games_2.reset_index(drop=True)], axis=1)
     return combined.mean().to_frame().T.sort_index(axis=1)
 
 
-t1 = 'УНИКС'
-t2 = 'Локомотив-Кубань'
+t1 = 'ЦСКА'
+t2 = 'Минск'
 
 pr_data = get_team_data(t1, t2)
 pr_data = pr_data.loc[:, ~pr_data.columns.duplicated()]
 
 pred = model.predict_proba(pr_data)
-print(f'Вероятность победы в матче: {t1 if pred[0][0] < pred[0][1] else t2} побеждает')
-print(pred)
+
+lose_probability = pred[0][0]
+win_probability = pred[0][1]
+
+if win_probability < 0.6:
+    res = f'Вероятность победы в матче команды {t1} низкая: {round(pred[0][1] * 100, 2)}%, возможна победа {t2}'
+else:
+    res = f'Вероятность победы в матче команды {t1} высокая: {round(pred[0][1] * 100, 2)}%. {t1} побеждает'
+if lose_probability > 0.5:
+    res = f'Вероятность победы в матче команды {t1} крайне низкая: {round(pred[0][1] * 100, 2)}%. {t2} побеждает'
+
+print("Вероятности (команда 1): \n", f'{pred[0][0]} - шанс проигрыша \n {pred[0][1]} - шанс выигрыша')
 
 
