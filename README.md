@@ -1,3 +1,3 @@
 # Модель машинного обучения для предсказания спортивных событий
-> [!WARNING]
-> Код Jupyter notebook 
+> [!NOTE]
+> **Код Jupyter Notebook** находится в директории [notebook](notebook/)
